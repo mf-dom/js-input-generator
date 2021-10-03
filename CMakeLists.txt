@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 include(${CMAKE_SOURCE_DIR}/cmake/ProtobufMutator.cmake)
 set(PROTOBUF_ROOT ${PBM_PATH}-build/external.protobuf)
 
-add_executable(js_input_generator library.cpp JSONMessage.cpp)
+add_executable(js_input_generator library.cpp)
 if (CMAKE_C_COMPILER MATCHES "emcc$")
     set(CMAKE_EXECUTABLE_SUFFIX ".wasm")
     set_target_properties(js_input_generator PROPERTIES LINK_FLAGS "-s WASM=1 --no-entry")

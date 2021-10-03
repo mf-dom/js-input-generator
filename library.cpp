@@ -1,9 +1,10 @@
 #include <google/protobuf/struct.pb.h>
 #include <google/protobuf/util/json_util.h>
 #include <google/protobuf/empty.pb.h>
+#include <google/protobuf/dynamic_message.h>
 #include "library.h"
 #include "src/mutator.h"
-#include "src/text_format.h"
+#include "DescriptorGenerator.h"
 
 #ifdef EMSCRIPTEN
 
@@ -21,22 +22,37 @@ void hello() {
 }
 
 #ifndef EMSCRIPTEN
-int main() {
-    protobuf_mutator::Mutator mutator;
-    google::protobuf::Struct msg;
-    std::string stuff = R"(
-{
-  "hello": "world"
-}
-)";
+using namespace protobuf_mutator;
+using namespace google::protobuf;
+using namespace google::protobuf::util;
 
-    google::protobuf::util::JsonStringToMessage(stuff, &msg);
+int main() {
+    DescriptorPool pool;
+    FileDescriptorProto file;
+    file.set_name("JSONCustom.proto");
+    DescriptorProto *desc = file.add_message_type();
+    desc->set_name("JSONCustom");
+    FieldDescriptorProto *hello = desc->add_field();
+    hello->set_name("hello");
+    hello->set_label(FieldDescriptorProto_Label_LABEL_REQUIRED);
+    hello->set_type(FieldDescriptorProto_Type_TYPE_STRING);
+    hello->set_number(1);
+    pool.BuildFile(file);
+
+    DynamicMessageFactory factory(&pool);
+    Message *msg = factory.GetPrototype(pool.FindMessageTypeByName("JSONCustom"))->New();
+    std::string stuff = R"({"hello":"world"})";
+
+    JsonStringToMessage(stuff, msg);
+    Mutator mutator;
 
     for (int i = 0; i < 100; i++) {
         stuff.clear();
-        google::protobuf::util::MessageToJsonString(msg, &stuff);
+        auto copy = msg->New();
+        copy->CopyFrom(*msg);
+        mutator.Mutate(copy, 1000);
+        google::protobuf::util::MessageToJsonString(*copy, &stuff);
         std::cout << stuff << std::endl;
-        mutator.Mutate(&msg, 1000);
     }
 }
 #endif
