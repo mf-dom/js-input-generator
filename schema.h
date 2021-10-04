@@ -6,6 +6,8 @@
 #include <google/protobuf/descriptor.pb.h>
 #include <google/protobuf/dynamic_message.h>
 
+#include "mutation.h"
+
 class FieldBuilder {
 private:
     google::protobuf::FieldDescriptorProto *proto;
@@ -61,7 +63,7 @@ public:
 
     bool build();
 
-    google::protobuf::Message *create_instance(const std::string &name);
+    MutationFactory *create_mutator(const std::string &type, const std::string &json);
 
     std::vector<std::string> *get_errors();
 

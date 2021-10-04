@@ -12,23 +12,22 @@ EMSCRIPTEN_BINDINGS(inputgen) {
             .function("withName", &FieldBuilder::with_name, allow_raw_pointers())
             .function("withLabel", &FieldBuilder::with_label, allow_raw_pointers())
             .function("withType", &FieldBuilder::with_type, allow_raw_pointers())
-            .function("withNamedType", &FieldBuilder::with_named_type, allow_raw_pointers())
-            ;
+            .function("withNamedType", &FieldBuilder::with_named_type, allow_raw_pointers());
     class_<SchemaBuilder>("SchemaBuilder")
             .function("addField", &SchemaBuilder::add_field, allow_raw_pointers())
-            .function("withName", &SchemaBuilder::with_name, allow_raw_pointers())
-            ;
+            .function("withName", &SchemaBuilder::with_name, allow_raw_pointers());
+    class_<MutationFactory>("MutationFactory")
+            .function("getMutation", &MutationFactory::get_mutation);
     class_<SchemaFactory>("SchemaFactory")
+            .constructor<>()
             .function("addSchema", &SchemaFactory::add_schema, allow_raw_pointers())
-            .function("createInstance", &SchemaFactory::create_instance, allow_raw_pointers())
+            .function("createMutator", &SchemaFactory::create_mutator, allow_raw_pointers())
             .function("build", &SchemaFactory::build)
-            .function("getErrors", &SchemaFactory::get_errors, allow_raw_pointers())
-            ;
+            .function("getErrors", &SchemaFactory::get_errors, allow_raw_pointers());
     enum_<FieldDescriptorProto_Label>("FieldLabel")
             .value("OPTIONAL", FieldDescriptorProto_Label_LABEL_OPTIONAL)
             .value("REQUIRED", FieldDescriptorProto_Label_LABEL_REQUIRED)
-            .value("REPEATED", FieldDescriptorProto_Label_LABEL_REPEATED)
-            ;
+            .value("REPEATED", FieldDescriptorProto_Label_LABEL_REPEATED);
     enum_<FieldDescriptorProto_Type>("FieldType")
             .value("DOUBLE", FieldDescriptorProto_Type_TYPE_DOUBLE)
             .value("FLOAT", FieldDescriptorProto_Type_TYPE_FLOAT)
@@ -38,17 +37,17 @@ EMSCRIPTEN_BINDINGS(inputgen) {
             .value("BOOL", FieldDescriptorProto_Type_TYPE_BOOL)
             .value("STRING", FieldDescriptorProto_Type_TYPE_STRING)
             .value("GROUP", FieldDescriptorProto_Type_TYPE_GROUP)
-            // MESSAGE omitted; use
+                    // MESSAGE omitted; use named type
             .value("BYTES", FieldDescriptorProto_Type_TYPE_BYTES)
             .value("UINT32", FieldDescriptorProto_Type_TYPE_UINT32)
             .value("SFIXED32", FieldDescriptorProto_Type_TYPE_SFIXED32)
             .value("SFIXED64", FieldDescriptorProto_Type_TYPE_SFIXED64)
             .value("SINT32", FieldDescriptorProto_Type_TYPE_SINT32)
-            .value("SINT64", FieldDescriptorProto_Type_TYPE_SINT64)
-            ;
+            .value("SINT64", FieldDescriptorProto_Type_TYPE_SINT64);
 }
 
 #else
+
 #include <google/protobuf/struct.pb.h>
 #include <google/protobuf/util/json_util.h>
 #include <google/protobuf/empty.pb.h>
@@ -73,19 +72,12 @@ int main() {
         }
     }
 
-    Message *msg = factory.create_instance("JSONCustom");
     std::string stuff = R"({"hello":"world"})";
-
-    JsonStringToMessage(stuff, msg);
-    Mutator mutator;
+    MutationFactory *mfactory = factory.create_mutator("JSONCustom", stuff);
 
     for (int i = 0; i < 100; i++) {
-        stuff.clear();
-        auto copy = msg->New();
-        copy->CopyFrom(*msg);
-        mutator.Mutate(copy, 1000);
-        google::protobuf::util::MessageToJsonString(*copy, &stuff);
-        std::cout << stuff << std::endl;
+        std::cout << mfactory->get_mutation() << std::endl;
     }
 }
+
 #endif

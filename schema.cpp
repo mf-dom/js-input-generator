@@ -1,4 +1,5 @@
 #include "schema.h"
+#include <google/protobuf/util/json_util.h>
 
 using namespace google::protobuf;
 using namespace google::protobuf::util;
@@ -68,9 +69,12 @@ SchemaBuilder *SchemaFactory::add_schema() {
     return schema;
 }
 
-google::protobuf::Message *SchemaFactory::create_instance(const std::string& name) {
-    auto *prototype = factory.GetPrototype(this->pool.FindMessageTypeByName(name))->New(&this->arena);
-    return prototype;
+MutationFactory *SchemaFactory::create_mutator(const string &type, const string &json) {
+    auto *base = factory.GetPrototype(this->pool.FindMessageTypeByName(type))->New(&this->arena);
+    JsonStringToMessage(json, base);
+    auto *mfactory = new MutationFactory(base, base->ByteSizeLong());
+    this->arena.Own(mfactory);
+    return mfactory;
 }
 
 bool SchemaFactory::build() {
