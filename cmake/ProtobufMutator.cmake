@@ -5,6 +5,7 @@ set(PBM_PREFIX protobuf_mutator)
 set(PBM_PATH ${CMAKE_CURRENT_BINARY_DIR}/${PBM_PREFIX}/src/${PBM_PREFIX})
 set(PBM_LIB_PATH ${PBM_PATH}-build/src/libprotobuf-mutator.a)
 set(PBM_FUZZ_LIB_PATH ${PBM_PATH}-build/src/libfuzzer/libprotobuf-mutator-libfuzzer.a)
+set(PROTOBUF_ROOT ${PBM_PATH}-build/external.protobuf)
 
 ExternalProject_Add(${PBM_PREFIX}
   PREFIX ${PBM_PREFIX}
@@ -12,7 +13,7 @@ ExternalProject_Add(${PBM_PREFIX}
   GIT_TAG master
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} -DLIB_PROTO_MUTATOR_DOWNLOAD_PROTOBUF:BOOL=on -DLIB_PROTO_MUTATOR_TESTING:BOOL=off
   CMAKE_CACHE_ARGS -DCMAKE_TOOLCHAIN_FILE:FILEPATH=${CMAKE_TOOLCHAIN_FILE}
-  BUILD_BYPRODUCTS ${PBM_LIB_PATH} ${PBM_FUZZ_LIB_PATH}
+  BUILD_BYPRODUCTS ${PBM_LIB_PATH} ${PBM_FUZZ_LIB_PATH} ${PROTOBUF_ROOT}/lib/libprotobufd.a ${PROTOBUF_ROOT}/lib/libprotobuf.a
   PATCH_COMMAND patch CMakeLists.txt ${CMAKE_SOURCE_DIR}/libprotobuf-mutator.patch
   UPDATE_COMMAND ""
   INSTALL_COMMAND ""

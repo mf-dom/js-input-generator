@@ -1,0 +1,22 @@
+{
+  "name": "inputgen",
+  "version": "1.0.0",
+  "description": "Balanced input generator for structured JavaScript types.",
+  "main": "wasm/js_input_generator.js",
+  "type": "module",
+  "scripts": {
+    "build:wasm": "mkdir -p wasm && cd wasm && cmake -DCMAKE_TOOLCHAIN_FILE=$(dirname $(which emcc))/cmake/Modules/Platform/Emscripten.cmake -DCMAKE_BUILD_TYPE=Release .. && make -j$(nproc)",
+    "build:native": "mkdir -p native && cd native && cmake -DCMAKE_BUILD_TYPE=Release .. && make -j$(nproc)",
+    "postinstall": "npm run build:wasm"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mf-dom/js-input-generator.git"
+  },
+  "author": "Addison Crump",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mf-dom/js-input-generator/issues"
+  },
+  "homepage": "https://github.com/mf-dom/js-input-generator#readme"
+}

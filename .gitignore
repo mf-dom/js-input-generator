@@ -1,3 +1,8 @@
 cmake-build-*/
 build/
 .idea/
+node_modules/
+native/
+wasm/
+webpack-test/dist/*
+!webpack-test/dist/index.html
