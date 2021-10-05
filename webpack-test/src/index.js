@@ -12,6 +12,8 @@ fbuilder.withType(FieldType.STRING)
 factory.build()
 
 let mutator = factory.createMutator("JSONCustom", '{"hello":"world"}')
-for (let i = 0; i < 100; i++) {
-    console.log(JSON.parse(mutator.getMutation()))
+for (let i = 0; i < 1000; i++) {
+    let p = document.createElement("p");
+    p.innerText = mutator.getMutation();
+    document.body.appendChild(p);
 }
