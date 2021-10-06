@@ -10,11 +10,14 @@ sbuilder.addField().withName("foo").withLabel(FieldLabel.OPTIONAL).withType(Fiel
 factory.build();
 
 let mutator = factory.createMutator("JSONCustom", JSON.stringify({"hello": "howdy", "world": [4]}));
+let res = [];
 let time = performance.now();
-for (let i = 0; i < 100000; i++) {
-    JSON.parse(mutator.getMutation());
+for (let i = 0; i < 1000000; i++) {
+    res.push(JSON.parse(mutator.getMutation()));
 }
 time = (performance.now() - time) / 1000.;
 let p = document.createElement("p");
 p.innerText = time.toString() + " seconds";
 document.body.appendChild(p);
+console.debug(res)
+factory.delete()
