@@ -1,11 +1,7 @@
-//
-// Created by addisoncrump on 10/4/21.
-//
-
 #ifndef JS_INPUT_GENERATOR_MUTATION_H
 #define JS_INPUT_GENERATOR_MUTATION_H
 
-#include <google/protobuf/arena.h>
+#include <google/protobuf/message.h>
 #include <src/mutator.h>
 #ifdef EMSCRIPTEN
 #include <emscripten.h>
@@ -18,7 +14,7 @@ private:
     protobuf_mutator::Mutator mutator;
 
 public:
-    MutationFactory(const google::protobuf::Message *base, size_t size_hint);
+    explicit MutationFactory(const google::protobuf::Message *base);
 
     std::string get_mutation();
 };

@@ -1,4 +1,5 @@
 #include "schema.h"
+#include <google/protobuf/struct.pb.h>
 #include <google/protobuf/util/json_util.h>
 
 using namespace google::protobuf;
@@ -12,17 +13,17 @@ FieldBuilder *FieldBuilder::with_name(std::string name) {
     return this;
 }
 
-FieldBuilder *FieldBuilder::with_number(google::protobuf::int32 number) {
+FieldBuilder *FieldBuilder::with_number(int32 number) {
     this->proto->set_number(number);
     return this;
 }
 
-FieldBuilder *FieldBuilder::with_label(google::protobuf::FieldDescriptorProto_Label label) {
+FieldBuilder *FieldBuilder::with_label(FieldDescriptorProto_Label label) {
     this->proto->set_label(label);
     return this;
 }
 
-FieldBuilder *FieldBuilder::with_type(google::protobuf::FieldDescriptorProto_Type type) {
+FieldBuilder *FieldBuilder::with_type(FieldDescriptorProto_Type type) {
     this->proto->set_type(type);
     return this;
 }
@@ -72,7 +73,7 @@ SchemaBuilder *SchemaFactory::add_schema() {
 MutationFactory *SchemaFactory::create_mutator(const string &type, const string &json) {
     auto *base = factory.GetPrototype(this->pool.FindMessageTypeByName(type))->New(&this->arena);
     JsonStringToMessage(json, base);
-    auto *mfactory = new MutationFactory(base, base->ByteSizeLong());
+    auto *mfactory = new MutationFactory(base);
     this->arena.Own(mfactory);
     return mfactory;
 }

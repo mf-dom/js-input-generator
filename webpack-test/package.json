@@ -1,6 +1,7 @@
 {
   "name": "inputgen-test",
   "version": "1.0.0",
+  "browser": "module",
   "scripts": {
     "build": "webpack"
   },

@@ -6,7 +6,6 @@
   "type": "module",
   "scripts": {
     "build:wasm": "mkdir -p wasm && cd wasm && cmake -DCMAKE_TOOLCHAIN_FILE=$(dirname $(which emcc))/cmake/Modules/Platform/Emscripten.cmake -DCMAKE_BUILD_TYPE=Release .. && make -j$(nproc)",
-    "build:native": "mkdir -p native && cd native && cmake -DCMAKE_BUILD_TYPE=Release .. && make -j$(nproc)",
     "postinstall": "npm run build:wasm"
   },
   "repository": {

@@ -31,19 +31,24 @@ EMSCRIPTEN_BINDINGS(inputgen) {
     enum_<FieldDescriptorProto_Type>("FieldType")
             .value("DOUBLE", FieldDescriptorProto_Type_TYPE_DOUBLE)
             .value("FLOAT", FieldDescriptorProto_Type_TYPE_FLOAT)
-            .value("INT64", FieldDescriptorProto_Type_TYPE_INT64)
-            .value("UINT64", FieldDescriptorProto_Type_TYPE_UINT64)
-            .value("INT32", FieldDescriptorProto_Type_TYPE_INT32)
+                    // json formatter does naughty things with 64-bit values
+//            .value("INT64", FieldDescriptorProto_Type_TYPE_INT64)
+//            .value("UINT64", FieldDescriptorProto_Type_TYPE_UINT64)
+//            .value("SINT64", FieldDescriptorProto_Type_TYPE_SINT64)
+//            .value("FIXED64", FieldDescriptorProto_Type_TYPE_FIXED64)
+//            .value("SFIXED64", FieldDescriptorProto_Type_TYPE_SFIXED64)
+            .value("INT", FieldDescriptorProto_Type_TYPE_INT32)
+            .value("FIXED", FieldDescriptorProto_Type_TYPE_FIXED32)
             .value("BOOL", FieldDescriptorProto_Type_TYPE_BOOL)
             .value("STRING", FieldDescriptorProto_Type_TYPE_STRING)
-            .value("GROUP", FieldDescriptorProto_Type_TYPE_GROUP)
+                    // deprecated
+//            .value("GROUP", FieldDescriptorProto_Type_TYPE_GROUP)
                     // MESSAGE omitted; use named type
+//            .value("MESSAGE", FieldDescriptorProto_Type_TYPE_MESSAGE)
             .value("BYTES", FieldDescriptorProto_Type_TYPE_BYTES)
-            .value("UINT32", FieldDescriptorProto_Type_TYPE_UINT32)
-            .value("SFIXED32", FieldDescriptorProto_Type_TYPE_SFIXED32)
-            .value("SFIXED64", FieldDescriptorProto_Type_TYPE_SFIXED64)
-            .value("SINT32", FieldDescriptorProto_Type_TYPE_SINT32)
-            .value("SINT64", FieldDescriptorProto_Type_TYPE_SINT64);
+            .value("UINT", FieldDescriptorProto_Type_TYPE_UINT32)
+            .value("SFIXED", FieldDescriptorProto_Type_TYPE_SFIXED32)
+            .value("SINT", FieldDescriptorProto_Type_TYPE_SINT32);
 }
 
 #else
@@ -62,17 +67,17 @@ int main() {
     SchemaFactory factory;
     auto *sbuilder = factory.add_schema();
     sbuilder->with_name("JSONCustom");
-    auto *fbuilder = sbuilder->add_field();
-    fbuilder->with_name("hello");
-    fbuilder->with_label(FieldDescriptorProto_Label_LABEL_REQUIRED);
-    fbuilder->with_type(FieldDescriptorProto_Type_TYPE_STRING);
+    sbuilder->add_field()->with_name("hello")->with_label(FieldDescriptorProto_Label_LABEL_REQUIRED)->with_type(FieldDescriptorProto_Type_TYPE_STRING);
+    sbuilder->add_field()->with_name("world")->with_label(FieldDescriptorProto_Label_LABEL_REPEATED)->with_type(FieldDescriptorProto_Type_TYPE_INT32);
+    sbuilder->add_field()->with_name("foo")->with_label(FieldDescriptorProto_Label_LABEL_OPTIONAL)->with_type(FieldDescriptorProto_Type_TYPE_STRING);
+
     if (!factory.build()) {
         for (const auto &error : *factory.get_errors()) {
             std::cout << error << std::endl;
         }
     }
 
-    std::string stuff = R"({"hello":"world"})";
+    std::string stuff = R"({"hello": "howdy", "world": [4]})";
     MutationFactory *mfactory = factory.create_mutator("JSONCustom", stuff);
 
     for (int i = 0; i < 100; i++) {

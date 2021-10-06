@@ -8,5 +8,6 @@ module.exports = {
     },
     experiments: {
         topLevelAwait: true
-    }
+    },
+    mode: "production"
 };
