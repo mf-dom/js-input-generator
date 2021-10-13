@@ -14,6 +14,12 @@ MutationFactory::MutationFactory(const Message *base) : base(base),
                                                         size_hint(base->ByteSizeLong() * 10) {
 }
 
+inline const std::string &preferred_name(const FieldDescriptor &field) {
+    if (field.has_json_name()) {
+        return field.json_name();
+    }
+    return field.name();
+}
 
 void write_to_json(const Message &msg, JsonObjectWriter &writer, const std::string &name = "") {
     const auto *descriptor = msg.GetDescriptor();
@@ -23,7 +29,7 @@ void write_to_json(const Message &msg, JsonObjectWriter &writer, const std::stri
     for (int i = 0; i < descriptor->field_count(); i++) {
         auto *field = descriptor->field(i);
         if (field->is_repeated()) {
-            writer.StartList(field->name());
+            writer.StartList(preferred_name(*field));
             switch (field->type()) {
                 case FieldDescriptor::TYPE_DOUBLE:
                     for (const auto val: reflection->GetRepeatedFieldRef<double>(msg, field)) {
@@ -86,35 +92,35 @@ void write_to_json(const Message &msg, JsonObjectWriter &writer, const std::stri
         } else if (reflection->HasField(msg, field)) {
             switch (field->type()) {
                 case FieldDescriptor::TYPE_DOUBLE:
-                    writer.RenderDouble(field->name(), reflection->GetDouble(msg, field));
+                    writer.RenderDouble(preferred_name(*field), reflection->GetDouble(msg, field));
                     break;
                 case FieldDescriptor::TYPE_FLOAT:
-                    writer.RenderFloat(field->name(), reflection->GetFloat(msg, field));
+                    writer.RenderFloat(preferred_name(*field), reflection->GetFloat(msg, field));
                     break;
                 case FieldDescriptor::TYPE_BOOL:
-                    writer.RenderBool(field->name(), reflection->GetBool(msg, field));
+                    writer.RenderBool(preferred_name(*field), reflection->GetBool(msg, field));
                     break;
                 case FieldDescriptor::TYPE_STRING:
-                    writer.RenderString(field->name(), reflection->GetString(msg, field));
+                    writer.RenderString(preferred_name(*field), reflection->GetString(msg, field));
                     break;
                 case FieldDescriptor::TYPE_MESSAGE:
-                    write_to_json(reflection->GetMessage(msg, field), writer, field->name());
+                    write_to_json(reflection->GetMessage(msg, field), writer, preferred_name(*field));
                     break;
                 case FieldDescriptor::TYPE_BYTES:
-                    writer.RenderBytes(field->name(), reflection->GetString(msg, field));
+                    writer.RenderBytes(preferred_name(*field), reflection->GetString(msg, field));
                     break;
                 case FieldDescriptor::TYPE_ENUM:
-                    writer.RenderString(field->name(),
+                    writer.RenderString(preferred_name(*field),
                                         field->enum_type()->value(reflection->GetEnumValue(msg, field))->name());
                     break;
                 case FieldDescriptor::TYPE_FIXED32:
                 case FieldDescriptor::TYPE_UINT32:
-                    writer.RenderUint32(field->name(), reflection->GetUInt32(msg, field));
+                    writer.RenderUint32(preferred_name(*field), reflection->GetUInt32(msg, field));
                     break;
                 case FieldDescriptor::TYPE_INT32:
                 case FieldDescriptor::TYPE_SFIXED32:
                 case FieldDescriptor::TYPE_SINT32:
-                    writer.RenderInt32(field->name(), reflection->GetInt32(msg, field));
+                    writer.RenderInt32(preferred_name(*field), reflection->GetInt32(msg, field));
                     break;
                 case FieldDescriptor::TYPE_INT64:
                 case FieldDescriptor::TYPE_UINT64:

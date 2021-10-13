@@ -6,7 +6,7 @@
     "build": "webpack"
   },
   "dependencies": {
-    "inputgen": "file:.."
+    "@mf-dom/inputgen": "file:.."
   },
   "devDependencies": {
     "webpack": "^5.56.1",

@@ -1,12 +1,16 @@
 {
-  "name": "inputgen",
+  "name": "@mf-dom/inputgen",
   "version": "1.0.0",
   "description": "Balanced input generator for structured JavaScript types.",
   "main": "wasm/js_input_generator.js",
+  "files": [
+    "wasm/js_input_generator.js",
+    "wasm/js_input_generator.wasm"
+  ],
   "type": "module",
   "scripts": {
     "build:wasm": "mkdir -p wasm && cd wasm && cmake -DCMAKE_TOOLCHAIN_FILE=$(dirname $(which emcc))/cmake/Modules/Platform/Emscripten.cmake -DCMAKE_BUILD_TYPE=Release .. && make -j$(nproc)",
-    "postinstall": "npm run build:wasm"
+    "prepare": "npm run build:wasm"
   },
   "repository": {
     "type": "git",

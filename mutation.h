@@ -3,9 +3,6 @@
 
 #include <google/protobuf/message.h>
 #include <src/mutator.h>
-#ifdef EMSCRIPTEN
-#include <emscripten.h>
-#endif
 
 class MutationFactory {
 private:

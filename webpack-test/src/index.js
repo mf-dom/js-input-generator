@@ -1,4 +1,4 @@
-import load from "inputgen"
+import load from "@mf-dom/inputgen"
 
 const {SchemaFactory, FieldLabel, FieldType} = await load();
 
@@ -7,7 +7,7 @@ let sbuilder = factory.addSchema().withName("JSONCustom");
 sbuilder.addField().withName("hello").withLabel(FieldLabel.REQUIRED).withType(FieldType.STRING);
 sbuilder.addField().withName("world").withLabel(FieldLabel.REPEATED).withType(FieldType.INT);
 sbuilder.addField().withName("foo").withLabel(FieldLabel.OPTIONAL).withType(FieldType.STRING);
-factory.build();
+console.assert(factory.build());
 
 let mutator = factory.createMutator("JSONCustom", JSON.stringify({"hello": "howdy", "world": [4]}));
 let res = [];
