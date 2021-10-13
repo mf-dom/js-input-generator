@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Balanced input generator for structured JavaScript types.",
   "main": "wasm/js_input_generator.js",
+  "types": "src/inputgen.d.ts",
   "files": [
     "wasm/js_input_generator.js",
     "wasm/js_input_generator.wasm"
@@ -21,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/mf-dom/js-input-generator/issues"
   },
-  "homepage": "https://github.com/mf-dom/js-input-generator#readme"
+  "homepage": "https://github.com/mf-dom/js-input-generator#readme",
+  "dependencies": {
+    "typescript": "next"
+  }
 }
